@@ -13,6 +13,8 @@ namespace GAME.Core {
         Text planesDestroyed = null;
         [SerializeField]
         EnemyBehavior enemyPrefab = null;
+        [SerializeField]
+        private int numberOfEnemies = 25;
 
         private int _planesAwake = 0;
         private int _planesKilled = 0;
@@ -39,8 +41,9 @@ namespace GAME.Core {
                 enemyPrefab = Resources.Load( "Prefabs/Enemy" ) as EnemyBehavior;
             }
             _planesAwake = FindObjectsOfType<EnemyBehavior>( ).Length;
-            while( _planesAwake < 25 ) {
-                Instantiate( enemyPrefab );
+            while( _planesAwake < numberOfEnemies ) {
+                var enemy = Instantiate( enemyPrefab );
+                enemy.transform.parent = gameObject.transform;
                 _planesAwake++;
             }
         }
@@ -48,7 +51,7 @@ namespace GAME.Core {
         // Update is called once per frame
         void Update( ) {
             _planesAwake = FindObjectsOfType<EnemyBehavior>( ).Length;
-            if( _planesAwake < 25 ) {
+            if( _planesAwake < numberOfEnemies ) {
                 Instantiate( enemyPrefab );
                 _planesAwake++;
                 _planesKilled++;

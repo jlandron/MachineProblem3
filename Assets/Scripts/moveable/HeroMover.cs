@@ -64,10 +64,6 @@ namespace GAME.Movable {
             if( Input.GetKey( KeyCode.Space ) ) {
                 eggSpawner.SpawnEggs( transform );
             }
-
-            if( Input.GetKeyDown( KeyCode.Q ) ) {
-                Application.Quit( );
-            }
         }
     }
 }

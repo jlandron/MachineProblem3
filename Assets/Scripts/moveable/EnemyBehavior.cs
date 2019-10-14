@@ -39,6 +39,7 @@ namespace GAME.Movable {
         private EnemyState _state = EnemyState.PATROL;
         private float _currentSpeed = 0;
         private float _accelerationRate = 1f;
+        private int _pushSpeed = 4;
 
         private void Start( ) {
             transform.rotation = Quaternion.identity;
@@ -172,6 +173,7 @@ namespace GAME.Movable {
                 } else if( _state == EnemyState.CRIPPLED ) {
                     Destroy( gameObject );
                 } else {
+                    transform.position += _pushSpeed * collision.gameObject.transform.up * Time.deltaTime;
                     _state = EnemyState.STUNNED;
                 }
             }
