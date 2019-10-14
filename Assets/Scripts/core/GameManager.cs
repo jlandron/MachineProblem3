@@ -41,6 +41,9 @@ public class GameManager : MonoBehaviour {
                 Time.timeScale = 1;
             }
         }
+        if( Input.GetKeyDown( KeyCode.K )){
+            Camera.main.Zoom( 1 );
+        }
     }
 
 

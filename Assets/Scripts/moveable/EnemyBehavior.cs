@@ -16,9 +16,9 @@ namespace GAME.Movable {
         [SerializeField]
         private float scaleSpeed = 1f;
         [SerializeField]
-        private float sizeChangeTime = 2f;
+        private float sizeChangeTime = 1f;
         [SerializeField]
-        private float rotationTime = 1.5f;
+        private float rotationTime = 1f;
 
         [SerializeField]
         private HeroMover hero;

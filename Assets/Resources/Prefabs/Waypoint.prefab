@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4512957694072516014}
   - component: {fileID: 7033136671607413459}
   - component: {fileID: 628826262}
+  - component: {fileID: 7003299492872001653}
   m_Layer: 0
   m_Name: Waypoint
   m_TagString: Waypoint
@@ -111,3 +112,15 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 4.34
+--- !u!114 &7003299492872001653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1412605730276310403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea89e8bcc0270394886ed6a8d08c2bb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -7,6 +7,7 @@ namespace GAME.Movable {
         private Color _color;
         private float _baseHealth = 4f;
         private float _health = 4f;
+        private int _timesHit = 0;
         private float _timeLastHit = 0f;
         private const float _timeBetweenHits = 0.05f;
         private bool isVisible = true;
@@ -38,11 +39,17 @@ namespace GAME.Movable {
                 _initialPosition.position.z );
             transform.position = newPosition;
             _health = _baseHealth;
+            _timesHit = 0;
         }
 
         private void OnTriggerEnter2D( Collider2D collision ) {
             if( collision.gameObject.tag == "Projectile" && ( _timeLastHit > _timeBetweenHits ) ) {
+                _timesHit++;
+                if(_health > 1 ) {
+                    GetComponent<Shaker>( ).StartShaking( new Vector2( _timesHit, _timesHit ), _timesHit );
+                }
                 _health -= 1f;
+                
             }
         }
         public bool IsVisible {

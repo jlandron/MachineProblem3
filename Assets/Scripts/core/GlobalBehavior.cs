@@ -9,4 +9,9 @@ public static class GlobalBehavior {
             new Vector3( cameraHeight * aspectRatio, cameraHeight, 0 ) );
         return bounds;
     }
+
+    public static void Zoom(this Camera camera, float factor) {
+        camera.orthographicSize += factor;
+    }
+    
 }

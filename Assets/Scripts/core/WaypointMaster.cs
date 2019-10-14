@@ -8,6 +8,11 @@ namespace GAME.Core {
     public class WaypointMaster : MonoBehaviour {
         [SerializeField]
         Text wayPointSequence = null;
+        [SerializeField]
+        Camera waypointCamera = null;
+        [SerializeField]
+        Text cameraText = null;
+
         private Waypoint[] waypoints;
         private bool areVisible = true;
         private bool sequential = true;
@@ -16,13 +21,19 @@ namespace GAME.Core {
         void Start( ) {
             waypoints = FindObjectsOfType<Waypoint>( );
 
-            if( wayPointSequence == null ) {
+            if( wayPointSequence == null || cameraText == null) {
                 Text[] texts = FindObjectsOfType<Text>( );
                 foreach( Text text in texts ) {
                     if( text.name.Equals( "WayPointSequence" ) ) {
                         wayPointSequence = text;
                     }
+                    if( text.name.Equals( "WaypointCameraText" ) ) {
+                        cameraText = text;
+                    }
                 }
+            }
+            if(waypointCamera == null ) {
+                waypointCamera = GetComponentInChildren<Camera>( );
             }
         }
 
@@ -33,11 +44,33 @@ namespace GAME.Core {
             UpdateText( );
         }
 
+        private void LateUpdate( ) {
+            checkShaking( );
+        }
+
+        private void checkShaking( ) {
+            foreach(Waypoint waypoint in waypoints ) {
+                Shaker shaker = waypoint.GetComponent<Shaker>( );
+                if( shaker.IsShaking ) {
+                    waypointCamera.enabled = true;
+                    Vector3 newPosition = new Vector3( shaker.OriginalPosition.x, shaker.OriginalPosition.y, transform.position.z );
+                    waypointCamera.transform.position = newPosition;
+                    return;
+                }
+            }
+            waypointCamera.enabled = false;
+        }
+
         private void UpdateText( ) {
             if( sequential ) {
                 wayPointSequence.text = "Waypoint order: Sequential";
             } else {
                 wayPointSequence.text = "Waypoint order: Random";
+            }
+            if( waypointCamera.enabled ) {
+                cameraText.text = "Waypoint Camera: Active";
+            } else {
+                cameraText.text = "Waypoint Camera: Inactive";
             }
         }
 

@@ -7,9 +7,13 @@ namespace GAME.Core {
 
         [Header( "Prefabs" )]
         [SerializeField]
-        private GameObject eggPrefab;
+        private GameObject eggPrefab = null;
         [Header( "Text output" )]
-        public Text eggCounter = null;
+        [SerializeField]
+        private Text eggCounter = null;
+
+        [SerializeField]
+        private Image cooldownBar = null;
 
         private float _maxEggs = 60f;
         private float _cooldown = 0.2f;
@@ -26,6 +30,10 @@ namespace GAME.Core {
 
             eggCounter.text = "Number of Eggs: " + _eggCount;
             _timeSinceLastEggSpawned += Time.deltaTime;
+            float scale = ( 1 - ( _timeSinceLastEggSpawned / _cooldown ) );
+            scale = Mathf.Clamp( scale, 0, 1 );
+            Vector2 vector2 = new Vector2( scale , 0.1f );
+            cooldownBar.rectTransform.localScale = vector2;
         }
         public void SpawnEggs( Transform l_Transform ) {
 
@@ -57,6 +65,15 @@ namespace GAME.Core {
                 if( eggCounter == null ) {
                     if( text.gameObject.name == "EggCounter" ) {
                         eggCounter = text;
+                    }
+                }
+            }
+            if(cooldownBar == null ) {
+                Image[] images = FindObjectsOfType<Image>( );
+                foreach(Image image in images ) {
+                    if( image.name.Equals( "CooldownBar" ) ) {
+                        cooldownBar = image;
+                        break;
                     }
                 }
             }
