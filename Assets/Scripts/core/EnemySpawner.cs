@@ -25,40 +25,23 @@ namespace GAME.Core {
         private int _planesKilled = 0;
         private bool _isChasing = false;
 
+        private EnemyBehavior[] enemies;
+
 
         // Start is called before the first frame update
         void Start( ) {
-            Text[] texts = FindObjectsOfType<Text>( );
-            if( planeCounter == null ) {
-                foreach( Text text in texts ) {
-                    if( text.name.Equals( "PlaneCounter" ) ) {
-                        planeCounter = text;
-                    }
-                }
-            }
-            if( planesDestroyed == null ) {
-                foreach( Text text in texts ) {
-                    if( text.name.Equals( "PlanesDestroyed" ) ) {
-                        planesDestroyed = text;
-                    }
-                }
-            }
-            if( enemyPrefab == null ) {
-                enemyPrefab = Resources.Load( "Prefabs/Enemy" ) as EnemyBehavior;
-            }
-            _planesAwake = FindObjectsOfType<EnemyBehavior>( ).Length;
-            while( _planesAwake < numberOfEnemies ) {
-                EnemyBehavior enemy = Instantiate( enemyPrefab );
-                enemy.transform.parent = gameObject.transform;
-                _planesAwake++;
-            }
+            CheckConnections( );
         }
+
+        
 
         // Update is called once per frame
         void Update( ) {
-            _planesAwake = FindObjectsOfType<EnemyBehavior>( ).Length;
+            enemies = FindObjectsOfType<EnemyBehavior>( );
+            _planesAwake = enemies.Length;
             if( _planesAwake < numberOfEnemies ) {
-                Instantiate( enemyPrefab );
+                EnemyBehavior enemy = Instantiate( enemyPrefab );
+                enemy.transform.parent = gameObject.transform;
                 _planesAwake++;
                 _planesKilled++;
             }
@@ -83,7 +66,6 @@ namespace GAME.Core {
                         transform.position.z );
                     chaseCam.transform.position = newPosition * 0.5f;
                     chaseCam.orthographicSize = Mathf.Max( Vector3.Magnitude( enemy.hero.transform.position - enemy.transform.position ), 4 );
-                        
                     return;
                 }
             }
@@ -100,8 +82,35 @@ namespace GAME.Core {
                 chaseCamText.text = "";
                 chaseCamText.text = "Waypoint Camera: Active";
             } else {
-                
+
                 chaseCamText.text = "Waypoint Camera: Inactive";
+            }
+        }
+        private void CheckConnections( ) {
+            Text[] texts = FindObjectsOfType<Text>( );
+            if( planeCounter == null ) {
+                foreach( Text text in texts ) {
+                    if( text.name.Equals( "PlaneCounter" ) ) {
+                        planeCounter = text;
+                    }
+                }
+            }
+            if( planesDestroyed == null ) {
+                foreach( Text text in texts ) {
+                    if( text.name.Equals( "PlanesDestroyed" ) ) {
+                        planesDestroyed = text;
+                    }
+                }
+            }
+            if( enemyPrefab == null ) {
+                enemyPrefab = Resources.Load( "Prefabs/Enemy" ) as EnemyBehavior;
+            }
+            enemies = FindObjectsOfType<EnemyBehavior>( );
+            _planesAwake = enemies.Length;
+            while( _planesAwake < numberOfEnemies ) {
+                EnemyBehavior enemy = Instantiate( enemyPrefab );
+                enemy.transform.parent = gameObject.transform;
+                _planesAwake++;
             }
         }
     }

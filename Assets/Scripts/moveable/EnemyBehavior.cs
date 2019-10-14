@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using GAME.Core;
+﻿using GAME.Core;
+using UnityEngine;
 
 namespace GAME.Movable {
     public class EnemyBehavior : MonoBehaviour {
@@ -38,14 +38,21 @@ namespace GAME.Movable {
         private float _stateTime = 0f;
         private SpriteRenderer _spriteRenderer;
         [SerializeField]
+        private Vector3 _lerpTo;
+        [SerializeField]
         private EnemyState _state = EnemyState.PATROL;
         private float _currentSpeed = 0;
         private float _accelerationRate = 1f;
-        private int _pushSpeed = 50;
-        private float _pushedTime = 2f;
-        private float _currentPushTime = 0;
+        private int _pushDistance = 4;
         private bool _pushed = false;
-        private Vector3 _pushedDirection;
+        private Bounds _bounds;
+        private float _minX;
+        private float _maxX;
+        private float _minY;
+        private float _maxY;
+        private int _timeAlive;
+        private int lifeSpan;
+        private bool _isDead;
 
         private void Start( ) {
             transform.rotation = Quaternion.identity;
@@ -57,6 +64,12 @@ namespace GAME.Movable {
             if( hero == null ) {
                 hero = FindObjectOfType<HeroMover>( );
             }
+
+            _bounds = Camera.main.GetWorldBounds( );
+            _minX = -( _bounds.extents.x );
+            _maxX = _bounds.extents.x;
+            _minY = -( _bounds.extents.y );
+            _maxY = _bounds.extents.y;
         }
         private EnemyState State { get => _state; set => _state = value; }
 
@@ -99,6 +112,27 @@ namespace GAME.Movable {
                 break;
             }
             transform.rotation = Quaternion.Euler( 0, 0, transform.rotation.eulerAngles.z );
+            CheckLife( );
+            CheckPushed( );
+        }
+
+        private void CheckPushed( ) {
+            if( _pushed ) {
+                if( _state == EnemyState.STUNNED ) {
+                    if( Vector3.Distance( transform.position, _lerpTo ) >= 0.1 ) {
+                        transform.position = Vector3.Lerp( transform.position, _lerpTo, Time.deltaTime );
+                    } else {
+                        _pushed = false;
+                    }
+                } else {
+                    if( Vector3.Distance( transform.position, _lerpTo ) >= 0.1 ) {
+                        transform.position = Vector3.Lerp( transform.position, 2 * _lerpTo, Time.deltaTime );
+                        transform.position = new Vector3( transform.position.x, transform.position.y, 0f );
+                    } else {
+                        _pushed = false;
+                    }
+                }
+            }
         }
 
         private void ExecutePatrol( ) {
@@ -109,12 +143,6 @@ namespace GAME.Movable {
             PointAtPosition( waypoint.transform.position, turnSpeed * Time.deltaTime );
             _currentSpeed = Mathf.Lerp( _currentSpeed, speed, Time.deltaTime * _accelerationRate );
             transform.position += _currentSpeed * transform.up * Time.deltaTime;
-            if( _pushed && _currentPushTime < _pushedTime) {
-                _currentPushTime += Time.deltaTime;
-                transform.position += _pushSpeed * _pushedDirection * Time.deltaTime;
-            } else {
-                _pushedTime = 0;
-            }
         }
 
         private void executeCCWRotation( ) {
@@ -147,10 +175,10 @@ namespace GAME.Movable {
             Vector2 direction = new Vector2( ( hero.transform.position.x - transform.position.x ),
                 ( hero.transform.position.y - transform.position.y ) );
             transform.up = direction;
-            if(Vector2.Distance( hero.transform.position, transform.position) > 0.1 ) {
+            if( Vector2.Distance( hero.transform.position, transform.position ) > 0.1 ) {
                 transform.position += _currentSpeed * transform.up * Time.deltaTime;
             }
-            
+
         }
 
         private void ExecuteEnlarge( ) {
@@ -187,12 +215,12 @@ namespace GAME.Movable {
             isChasing = false;
             if( collision.gameObject.tag == "Projectile" ) {
                 if( _state == EnemyState.STUNNED ) {
+                    GetPushInfo( collision );
                     _state = EnemyState.CRIPPLED;
                 } else if( _state == EnemyState.CRIPPLED ) {
                     Destroy( gameObject );
                 } else {
-                    _pushed = true;
-                    _pushedDirection = collision.gameObject.transform.up;
+                    GetPushInfo( collision );
                     _state = EnemyState.STUNNED;
                 }
             }
@@ -204,9 +232,34 @@ namespace GAME.Movable {
                 }
             }
         }
+
+        private void GetPushInfo( Collider2D collision ) {
+            _pushed = true;
+            Vector3 heading = collision.gameObject.transform.up;
+            float distance = heading.magnitude;
+            Vector3 directionToMove = heading / distance;
+            _lerpTo = transform.position + _pushDistance * directionToMove;
+        }
+
         private void PointAtPosition( Vector3 p, float r ) {
             Vector3 v = p - transform.position;
             transform.up = Vector3.LerpUnclamped( transform.up, v, r );
+        }
+        private bool CheckIfOutOfBounds( ) {
+            if( transform.position.x > _maxX + 1 || transform.position.x < _minX - 1 ||
+                transform.position.y > _maxY + 1 || transform.position.y < _minY - 1 ) {
+                return true;
+            }
+            return false;
+        }
+        private void CheckLife( ) {
+            bool isOutOfBounds = CheckIfOutOfBounds( );
+            if( isOutOfBounds ) {
+                _isDead = true;
+            }
+            if( _isDead ) {
+                Destroy( gameObject );
+            }
         }
     }
 }

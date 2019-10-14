@@ -29,14 +29,14 @@ namespace GAME.Movable {
 
             if( _health == 0 ) {
                 GetComponent<Shaker>( ).IsShaking = false;
-                respawn( );
+                Respawn( );
             }
             _timeLastHit += Time.deltaTime;
         }
 
-        private void respawn( ) {
-            Vector3 newPosition = new Vector3( ( _initialPosition.position.x + UnityEngine.Random.Range( -15f, 15f ) ),
-                ( _initialPosition.position.y + UnityEngine.Random.Range( -15f, 15f ) ),
+        private void Respawn( ) {
+            Vector3 newPosition = new Vector3( ( _initialPosition.position.x + UnityEngine.Random.Range( -10f, 10f ) ),
+                ( _initialPosition.position.y + UnityEngine.Random.Range( -10f, 10f ) ),
                 _initialPosition.position.z );
             transform.position = newPosition;
             _health = _baseHealth;
@@ -50,7 +50,6 @@ namespace GAME.Movable {
                     GetComponent<Shaker>( ).StartShaking( new Vector2( _timesHit, _timesHit ), _timesHit );
                 }
                 _health -= 1f;
-                
             }
         }
         public bool IsVisible {

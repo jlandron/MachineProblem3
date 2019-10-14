@@ -26,8 +26,7 @@ namespace GAME.Core {
 
         // Update is called once per frame
         void Update( ) {
-            cullEggs( );
-
+            _eggCount = FindObjectsOfType<EggBehavior>( ).Length;
             eggCounter.text = "Number of Eggs: " + _eggCount;
             _timeSinceLastEggSpawned += Time.deltaTime;
             float scale = ( 1 - ( _timeSinceLastEggSpawned / _cooldown ) );
@@ -46,10 +45,6 @@ namespace GAME.Core {
             }
             return false;
 
-        }
-        private void cullEggs( ) {
-            EggBehavior[] eggs = FindObjectsOfType<EggBehavior>( );
-            _eggCount = eggs.Length;
         }
 
         private void CheckConnections( ) {
