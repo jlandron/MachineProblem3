@@ -35,14 +35,16 @@ namespace GAME.Core {
             Vector2 vector2 = new Vector2( scale , 0.1f );
             cooldownBar.rectTransform.localScale = vector2;
         }
-        public void SpawnEggs( Transform l_Transform ) {
+        public bool SpawnEggs( Transform l_Transform ) {
 
             if( ( _timeSinceLastEggSpawned >= _cooldown ) && ( _eggCount < _maxEggs ) ) {
                 Instantiate( eggPrefab,
                             l_Transform.position,
                             l_Transform.rotation );
                 _timeSinceLastEggSpawned = 0;
+                return true;
             }
+            return false;
 
         }
         private void cullEggs( ) {

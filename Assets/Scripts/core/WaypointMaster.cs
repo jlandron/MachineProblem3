@@ -1,5 +1,4 @@
 ﻿using GAME.Movable;
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,19 +8,22 @@ namespace GAME.Core {
         [SerializeField]
         Text wayPointSequence = null;
         [SerializeField]
-        Camera waypointCamera = null;
+        GameObject waypointCamera = null;
         [SerializeField]
         Text cameraText = null;
 
         private Waypoint[] waypoints;
-        private bool areVisible = true;
-        private bool sequential = true;
+        private bool _areVisible = true;
+        private bool _sequential = true;
+        private bool _cameraIsActive = false;
+
+
 
         // Start is called before the first frame update
         void Start( ) {
             waypoints = FindObjectsOfType<Waypoint>( );
 
-            if( wayPointSequence == null || cameraText == null) {
+            if( wayPointSequence == null || cameraText == null ) {
                 Text[] texts = FindObjectsOfType<Text>( );
                 foreach( Text text in texts ) {
                     if( text.name.Equals( "WayPointSequence" ) ) {
@@ -32,9 +34,7 @@ namespace GAME.Core {
                     }
                 }
             }
-            if(waypointCamera == null ) {
-                waypointCamera = GetComponentInChildren<Camera>( );
-            }
+            //waypointCamera.SetActive( false );
         }
 
         // Update is called once per frame
@@ -49,25 +49,31 @@ namespace GAME.Core {
         }
 
         private void checkShaking( ) {
-            foreach(Waypoint waypoint in waypoints ) {
+
+            foreach( Waypoint waypoint in waypoints ) {
                 Shaker shaker = waypoint.GetComponent<Shaker>( );
                 if( shaker.IsShaking ) {
-                    waypointCamera.enabled = true;
+                    waypointCamera.SetActive( true );
+                    _cameraIsActive = true;
                     Vector3 newPosition = new Vector3( shaker.OriginalPosition.x, shaker.OriginalPosition.y, transform.position.z );
                     waypointCamera.transform.position = newPosition;
                     return;
                 }
             }
-            waypointCamera.enabled = false;
+            waypointCamera.SetActive( false );
+            _cameraIsActive = false;
         }
 
         private void UpdateText( ) {
-            if( sequential ) {
+            if( _sequential ) {
+                wayPointSequence.text = "";
                 wayPointSequence.text = "Waypoint order: Sequential";
             } else {
+                wayPointSequence.text = "";
                 wayPointSequence.text = "Waypoint order: Random";
             }
-            if( waypointCamera.enabled ) {
+            if( _cameraIsActive) {
+                cameraText.text = "";
                 cameraText.text = "Waypoint Camera: Active";
             } else {
                 cameraText.text = "Waypoint Camera: Inactive";
@@ -77,7 +83,7 @@ namespace GAME.Core {
         public Waypoint GetNextWaypoint( Waypoint previous ) {
             Waypoint next;
             int previousLocation = 0;
-            if( sequential ) {
+            if( _sequential ) {
                 for( int i = 0; i < waypoints.Length; i++ ) {
 
                     if( previous.Equals( waypoints[ i ] ) ) {
@@ -92,16 +98,16 @@ namespace GAME.Core {
 
         private void SetVisibility( ) {
             foreach( Waypoint waypoint in waypoints ) {
-                waypoint.IsVisible = areVisible;
+                waypoint.IsVisible = _areVisible;
             }
         }
 
         private void CheckKeyBoardInput( ) {
             if( Input.GetKeyDown( KeyCode.H ) ) {
-                areVisible = !areVisible;
+                _areVisible = !_areVisible;
             }
             if( Input.GetKeyDown( KeyCode.J ) ) {
-                sequential = !sequential;
+                _sequential = !_sequential;
             }
         }
     }

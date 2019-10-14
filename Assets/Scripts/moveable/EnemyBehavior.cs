@@ -21,7 +21,7 @@ namespace GAME.Movable {
         private float rotationTime = 1f;
 
         [SerializeField]
-        private HeroMover hero;
+        public HeroMover hero;
         [SerializeField]
         private Waypoint waypoint;
         [SerializeField]
@@ -31,6 +31,8 @@ namespace GAME.Movable {
         [SerializeField]
         private Sprite crippledSprite;
 
+        public bool isChasing;
+
 
 
         private float _stateTime = 0f;
@@ -39,7 +41,11 @@ namespace GAME.Movable {
         private EnemyState _state = EnemyState.PATROL;
         private float _currentSpeed = 0;
         private float _accelerationRate = 1f;
-        private int _pushSpeed = 4;
+        private int _pushSpeed = 50;
+        private float _pushedTime = 2f;
+        private float _currentPushTime = 0;
+        private bool _pushed = false;
+        private Vector3 _pushedDirection;
 
         private void Start( ) {
             transform.rotation = Quaternion.identity;
@@ -103,6 +109,12 @@ namespace GAME.Movable {
             PointAtPosition( waypoint.transform.position, turnSpeed * Time.deltaTime );
             _currentSpeed = Mathf.Lerp( _currentSpeed, speed, Time.deltaTime * _accelerationRate );
             transform.position += _currentSpeed * transform.up * Time.deltaTime;
+            if( _pushed && _currentPushTime < _pushedTime) {
+                _currentPushTime += Time.deltaTime;
+                transform.position += _pushSpeed * _pushedDirection * Time.deltaTime;
+            } else {
+                _pushedTime = 0;
+            }
         }
 
         private void executeCCWRotation( ) {
@@ -125,15 +137,20 @@ namespace GAME.Movable {
         }
 
         private void ExecuteChase( ) {
+            isChasing = true;
             if( Vector3.Distance( transform.position, hero.transform.position ) > chaseDistance ) {
                 _state = EnemyState.ENLARGE;
+                isChasing = false;
                 _stateTime = 0f;
             }
             _stateTime += Time.deltaTime;
             Vector2 direction = new Vector2( ( hero.transform.position.x - transform.position.x ),
                 ( hero.transform.position.y - transform.position.y ) );
             transform.up = direction;
-            transform.position += _currentSpeed * transform.up * Time.deltaTime;
+            if(Vector2.Distance( hero.transform.position, transform.position) > 0.1 ) {
+                transform.position += _currentSpeed * transform.up * Time.deltaTime;
+            }
+            
         }
 
         private void ExecuteEnlarge( ) {
@@ -167,13 +184,15 @@ namespace GAME.Movable {
         }
 
         private void OnTriggerEnter2D( Collider2D collision ) {
+            isChasing = false;
             if( collision.gameObject.tag == "Projectile" ) {
                 if( _state == EnemyState.STUNNED ) {
                     _state = EnemyState.CRIPPLED;
                 } else if( _state == EnemyState.CRIPPLED ) {
                     Destroy( gameObject );
                 } else {
-                    transform.position += _pushSpeed * collision.gameObject.transform.up * Time.deltaTime;
+                    _pushed = true;
+                    _pushedDirection = collision.gameObject.transform.up;
                     _state = EnemyState.STUNNED;
                 }
             }

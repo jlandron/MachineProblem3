@@ -28,6 +28,7 @@ namespace GAME.Movable {
 
 
             if( _health == 0 ) {
+                GetComponent<Shaker>( ).IsShaking = false;
                 respawn( );
             }
             _timeLastHit += Time.deltaTime;

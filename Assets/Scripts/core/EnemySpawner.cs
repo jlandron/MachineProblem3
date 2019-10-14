@@ -1,7 +1,6 @@
-﻿using System;
+﻿using GAME.Movable;
 using UnityEngine;
 using UnityEngine.UI;
-using GAME.Movable;
 
 
 namespace GAME.Core {
@@ -15,9 +14,16 @@ namespace GAME.Core {
         EnemyBehavior enemyPrefab = null;
         [SerializeField]
         private int numberOfEnemies = 25;
+        [SerializeField]
+        private Camera chaseCam = null;
+        [SerializeField]
+        private Text chaseCamText = null;
+        [SerializeField]
+        private GameObject chaseCamBlocker = null;
 
         private int _planesAwake = 0;
         private int _planesKilled = 0;
+        private bool _isChasing = false;
 
 
         // Start is called before the first frame update
@@ -42,7 +48,7 @@ namespace GAME.Core {
             }
             _planesAwake = FindObjectsOfType<EnemyBehavior>( ).Length;
             while( _planesAwake < numberOfEnemies ) {
-                var enemy = Instantiate( enemyPrefab );
+                EnemyBehavior enemy = Instantiate( enemyPrefab );
                 enemy.transform.parent = gameObject.transform;
                 _planesAwake++;
             }
@@ -57,11 +63,46 @@ namespace GAME.Core {
                 _planesKilled++;
             }
             UpdateTexts( );
+            CheckChasing( );
+        }
+        private void LateUpdate( ) {
+            if( !_isChasing ) {
+                chaseCam.gameObject.SetActive( false );
+            }
+        }
+
+        private void CheckChasing( ) {
+            Vector3 newPosition;
+            EnemyBehavior[] enemies = FindObjectsOfType<EnemyBehavior>( );
+            foreach( EnemyBehavior enemy in enemies ) {
+                if( enemy.isChasing ) {
+                    chaseCam.gameObject.SetActive( true );
+                    _isChasing = true;
+                    newPosition = new Vector3( enemy.hero.transform.position.x + enemy.transform.position.x,
+                        enemy.hero.transform.position.y + enemy.transform.position.y,
+                        transform.position.z );
+                    chaseCam.transform.position = newPosition * 0.5f;
+                    chaseCam.orthographicSize = Mathf.Max( Vector3.Magnitude( enemy.hero.transform.position - enemy.transform.position ), 4 );
+                        
+                    return;
+                }
+            }
+            newPosition = new Vector3( chaseCamBlocker.transform.position.x, chaseCamBlocker.transform.position.y, transform.position.z );
+            chaseCam.transform.position = newPosition;
+            _isChasing = false;
         }
 
         private void UpdateTexts( ) {
             planeCounter.text = "Number of Planes: " + _planesAwake;
             planesDestroyed.text = "Planes Destroyed: " + _planesKilled;
+
+            if( _isChasing ) {
+                chaseCamText.text = "";
+                chaseCamText.text = "Waypoint Camera: Active";
+            } else {
+                
+                chaseCamText.text = "Waypoint Camera: Inactive";
+            }
         }
     }
 }

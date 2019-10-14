@@ -13,6 +13,8 @@ namespace GAME.Movable {
         private EggSpawner eggSpawner = null;
         [SerializeField]
         Text heroHitCounter = null;
+        [SerializeField]
+        Shaker _shaker;
 
         private float _timesHitByChaser = 0;
         private float _rotationSpeed;
@@ -62,7 +64,9 @@ namespace GAME.Movable {
                 transform.Rotate( Vector3.forward * _rotationSpeed * Time.deltaTime );
             }
             if( Input.GetKey( KeyCode.Space ) ) {
-                eggSpawner.SpawnEggs( transform );
+                if(eggSpawner.SpawnEggs( transform ) ) {
+                    _shaker.StartShaking( new Vector2( 1, 1 ), 1 );
+                }
             }
         }
     }

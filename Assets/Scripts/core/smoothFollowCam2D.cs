@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using GAME.Movable;
+using UnityEngine;
 
 public class smoothFollowCam2D : MonoBehaviour {
     [SerializeField]
