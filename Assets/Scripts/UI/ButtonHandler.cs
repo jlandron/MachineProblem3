@@ -7,7 +7,7 @@ namespace GAME.Ui {
 
     public class ButtonHandler : MonoBehaviour {
         public void LoadLevel( ) {
-            SceneManager.LoadScene( 1 );
+            SceneManager.LoadScene( SceneManager.GetActiveScene().buildIndex + 1 );
         }
 
         public void QuitGame( ) {

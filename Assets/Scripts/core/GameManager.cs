@@ -2,10 +2,6 @@
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
-    [SerializeField]
-    private Camera mainCamera;
-    [SerializeField]
-    private Camera waypointCamera;
 
     private bool _isPaused = false;
 
@@ -14,18 +10,17 @@ public class GameManager : MonoBehaviour {
     private void Awake( ) {
         if( _instance == null ) {
             _instance = this;
-            DontDestroyOnLoad( this.gameObject );
         } else {
             Destroy( this );
         }
     }
     private void Start( ) {
-        if( waypointCamera != null ) {
-            waypointCamera.enabled = false;
-        }
-
+        Screen.SetResolution( 1600, 900, false );
     }
     private void Update( ) {
+        if(SceneManager.GetActiveScene().name == ("_preload") ) {
+            SceneManager.LoadScene( 1 );
+        }
         if( Input.GetKeyDown( KeyCode.Q ) ) {
             Application.Quit( );
         }
@@ -41,18 +36,11 @@ public class GameManager : MonoBehaviour {
                 Time.timeScale = 1;
             }
         }
-        if( Input.GetKeyDown( KeyCode.K )){
+        if( Input.GetKeyDown( KeyCode.O )){
             Camera.main.Zoom( 1 );
         }
-    }
-
-
-
-    public void ShowWaypointCam( ) {
-        waypointCamera.enabled = true;
-    }
-
-    public void ShowChaseCamera( Transform player, Transform enemy ) {
-
+        if( Input.GetKeyDown( KeyCode.I ) ) {
+            Camera.main.Zoom( -1 );
+        }
     }
 }

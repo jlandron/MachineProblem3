@@ -44,3 +44,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wayPointSequence: {fileID: 0}
+  waypointCamera: {fileID: 0}
+  cameraText: {fileID: 0}
+  camBlocker: {fileID: 0}

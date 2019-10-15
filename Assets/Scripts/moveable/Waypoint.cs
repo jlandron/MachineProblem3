@@ -18,7 +18,7 @@ namespace GAME.Movable {
         }
 
         private void Update( ) {
-            if( isVisible ) {
+            if( isVisible ) { 
                 _color = new Color( 1f, 1f, 1f, ( _health / _baseHealth ) );
                 _spriteRenderer.color = _color;
             } else {
@@ -50,6 +50,8 @@ namespace GAME.Movable {
                     GetComponent<Shaker>( ).StartShaking( new Vector2( _timesHit, _timesHit ), _timesHit );
                 }
                 _health -= 1f;
+                GetComponent<AudioSource>( ).Stop( );
+                GetComponent<AudioSource>( ).Play( );
             }
         }
         public bool IsVisible {

@@ -66,6 +66,8 @@ namespace GAME.Movable {
             if( Input.GetKey( KeyCode.Space ) ) {
                 if(eggSpawner.SpawnEggs( transform ) ) {
                     _shaker.StartShaking( new Vector2( 1, 1 ), 1 );
+                    GetComponent<AudioSource>( ).Stop( );
+                    GetComponent<AudioSource>( ).Play();
                 }
             }
         }

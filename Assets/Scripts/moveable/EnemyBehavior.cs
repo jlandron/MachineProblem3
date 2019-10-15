@@ -120,14 +120,15 @@ namespace GAME.Movable {
             if( _pushed ) {
                 if( _state == EnemyState.STUNNED ) {
                     if( Vector3.Distance( transform.position, _lerpTo ) >= 0.1 ) {
-                        transform.position = Vector3.Lerp( transform.position, _lerpTo, Time.deltaTime );
+                        Vector3 newPos = Vector3.Lerp( transform.position, _lerpTo, Time.deltaTime );
+                        transform.position = new Vector3( newPos.x, newPos.y, 0f );
                     } else {
                         _pushed = false;
                     }
                 } else {
                     if( Vector3.Distance( transform.position, _lerpTo ) >= 0.1 ) {
-                        transform.position = Vector3.Lerp( transform.position, 2 * _lerpTo, Time.deltaTime );
-                        transform.position = new Vector3( transform.position.x, transform.position.y, 0f );
+                        Vector3 newPos = Vector3.Lerp( transform.position, _lerpTo, 2* Time.deltaTime );
+                        transform.position = new Vector3( newPos.x, newPos.y, 0f );
                     } else {
                         _pushed = false;
                     }

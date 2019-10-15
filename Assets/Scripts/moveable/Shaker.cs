@@ -13,8 +13,10 @@ namespace GAME.Movable {
         private float _timeLeft;
         private Vector3 _originalPosition;
         private bool _isShaking = false;
+        private float _shakeAmount = 1f;
 
         private float nextHarmonic = 0f;
+        private float _shakeSpeed = 1f;
 
         public bool IsShaking { get => _isShaking; set => _isShaking = value; }
         public Vector3 OriginalPosition { get => _originalPosition; set => _originalPosition = value; }
@@ -27,19 +29,26 @@ namespace GAME.Movable {
         void Update( ) {
 
             if( IsShaking ) {
+
+                
                 if( _timeLeft <= 0.1 ) {
                     _isShaking = false;
                     return;
                 }
+                _timeLeft -= Time.deltaTime;
+                /*
                 float frac = _timeLeft / duration;
                 nextHarmonic = frac * frac * Mathf.Cos( ( 1 - frac ) * omega );
-                _timeLeft -= Time.deltaTime;
                 Vector3 c = OriginalPosition;
                 float fx = Random.Range( 0f, 1f ) > 0.5f ? -nextHarmonic : nextHarmonic;
                 float fy = Random.Range( 0f, 1f ) > 0.5f ? -nextHarmonic : nextHarmonic;
                 c.x += shakeDelta.x * fx;
                 c.y += shakeDelta.y * fx;
                 transform.position = c;
+                */
+                Vector3 LerpTo = Vector3.Lerp( transform.localPosition, _originalPosition + Random.insideUnitSphere * shakeDelta.x, _shakeSpeed );
+                LerpTo.z = transform.localPosition.z;
+                transform.localPosition = LerpTo;
             }
         }
         

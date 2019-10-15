@@ -11,11 +11,15 @@ namespace GAME.Core {
         GameObject waypointCamera = null;
         [SerializeField]
         Text cameraText = null;
+        [SerializeField]
+        private GameObject camBlocker;
 
         private Waypoint[] waypoints;
         private bool _areVisible = true;
         private bool _sequential = true;
         private bool _cameraIsActive = false;
+        private Vector3 newPosition;
+
 
 
 
@@ -60,20 +64,19 @@ namespace GAME.Core {
                     return;
                 }
             }
-            waypointCamera.SetActive( false );
+            newPosition = new Vector3( camBlocker.transform.position.x, camBlocker.transform.position.y, transform.position.z );
+            waypointCamera.transform.position = newPosition;
+            //waypointCamera.SetActive( false );
             _cameraIsActive = false;
         }
 
         private void UpdateText( ) {
             if( _sequential ) {
-                wayPointSequence.text = "";
                 wayPointSequence.text = "Waypoint order: Sequential";
             } else {
-                wayPointSequence.text = "";
                 wayPointSequence.text = "Waypoint order: Random";
             }
-            if( _cameraIsActive) {
-                cameraText.text = "";
+            if( _cameraIsActive ) {
                 cameraText.text = "Waypoint Camera: Active";
             } else {
                 cameraText.text = "Waypoint Camera: Inactive";

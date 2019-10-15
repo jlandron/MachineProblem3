@@ -48,12 +48,6 @@ namespace GAME.Core {
             UpdateTexts( );
             CheckChasing( );
         }
-        private void LateUpdate( ) {
-            if( !_isChasing ) {
-                chaseCam.gameObject.SetActive( false );
-            }
-        }
-
         private void CheckChasing( ) {
             Vector3 newPosition;
             EnemyBehavior[] enemies = FindObjectsOfType<EnemyBehavior>( );
@@ -71,6 +65,7 @@ namespace GAME.Core {
             }
             newPosition = new Vector3( chaseCamBlocker.transform.position.x, chaseCamBlocker.transform.position.y, transform.position.z );
             chaseCam.transform.position = newPosition;
+            //chaseCam.gameObject.SetActive( false );
             _isChasing = false;
         }
 
@@ -80,10 +75,10 @@ namespace GAME.Core {
 
             if( _isChasing ) {
                 chaseCamText.text = "";
-                chaseCamText.text = "Waypoint Camera: Active";
+                chaseCamText.text = "Chase Camera: Active";
             } else {
 
-                chaseCamText.text = "Waypoint Camera: Inactive";
+                chaseCamText.text = "Chase Camera: Inactive";
             }
         }
         private void CheckConnections( ) {
